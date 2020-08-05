@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 
-const getStateFromLocalStorage = () => {
-  const storage = localStorage.getItem('counterState');
-  if (storage) return JSON.parse(storage);
+const getStateFromDocumentTitle = () => {
+  const storage = document.title;
+  console.log(storage);
+  if (storage[0] === '{') return storage;
   return { count: 0 };
 };
 
 class Counter extends Component {
   constructor(props) {
     super(props);
-    this.state = getStateFromLocalStorage();
+    this.state = getStateFromDocumentTitle();
   }
 
   increment = () => {
@@ -20,23 +21,35 @@ class Counter extends Component {
         return { count: state.count + step };
       },
       () => {
-        localStorage.setItem('counterState', JSON.stringify(this.state));
-        console.log(localStorage);
+        document.title = this.state.count;
       },
     );
-
-    console.log('Before!', this.state);
   };
 
   decrement = () => {
-    this.setState({ count: this.state.count - 1 });
+    this.setState(
+      (state) => {
+        return { count: state.count - 1 };
+      },
+      () => {
+        document.title = this.state.count;
+      },
+    );
   };
 
   reset = () => {
-    this.setState({ count: 0 });
+    this.setState(
+      () => {
+        return { count: 0 };
+      },
+      () => {
+        document.title = this.state.count;
+      },
+    );
   };
 
   render() {
+    document.title = this.state.count;
     const { count } = this.state;
     return (
       <div className="Counter">
