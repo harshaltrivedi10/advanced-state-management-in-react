@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // const getStateFromLocalStorage = () => {
 //   const storage = localStorage.getItem('counterState');
@@ -7,36 +7,40 @@ import React, { useState, useEffect } from 'react';
 //   return 0;
 // };
 
-const useLocalStorage = (initialState, key) => {
-  const get = () => {
-    const storage = localStorage.getItem(key);
-    if (storage) return storage;
-    return initialState;
-  };
+// const useLocalStorage = (initialState, key) => {
+//   const get = () => {
+//     const storage = localStorage.getItem(key);
+//     if (storage) return storage;
+//     return initialState;
+//   };
 
-  const [val, setVal] = useState(get());
+//   const [val, setVal] = useState(get());
 
-  useEffect(() => {
-    localStorage.setItem(key, val);
-  }, [val]);
+//   useEffect(() => {
+//     localStorage.setItem(key, val);
+//   }, [val]);
 
-  return [val, setVal];
-};
+//   return [val, setVal];
+// };
 
 // const storeStateInLocalStorage = (count) => {
 //   localStorage.setItem('counterState', +count);
 // };
 
 const Counter = ({ max, step }) => {
-  const [count, setCount] = useLocalStorage(0, 'counter');
+  const [count, setCount] = useState(0, 'counter');
+
+  const countRef = useRef();
+
+  let message = '';
+  if (countRef.current < count) message = 'Higher';
+  if (countRef.current > count) message = 'Lower';
+
+  countRef.current = count;
 
   // const increment = () => setCount(count + 1);
 
-  const increment = () =>
-    setCount((c) => {
-      if (c >= max) return c;
-      return c + step;
-    });
+  const increment = () => setCount((c) => c + 1);
 
   const decrement = () => setCount(count - 1);
   const reset = () => setCount(0);
@@ -48,6 +52,7 @@ const Counter = ({ max, step }) => {
 
   return (
     <div className="Counter">
+      <p>{message}</p>
       <p className="count">{count}</p>
       <section className="controls">
         <button onClick={increment}>Increment</button>
