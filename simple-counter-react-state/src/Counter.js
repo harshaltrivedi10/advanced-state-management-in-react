@@ -45,10 +45,13 @@ const Counter = ({ max, step }) => {
   const decrement = () => setCount(count - 1);
   const reset = () => setCount(0);
 
-  // useEffect(() => {
-  //   document.title = count;
-  //   storeStateInLocalStorage(count);
-  // }, [count]);
+  useEffect(() => {
+    const id = setInterval(() => {
+      console.log(`Count: ${count}`);
+    }, 3000);
+
+    return () => clearInterval(id);
+  }, [count]);
 
   return (
     <div className="Counter">
